@@ -52,20 +52,20 @@
 # def button(update, context):
 #     query = update.callback_query
 
-#     RJAPI = "https://api-rj-app.com/api2/mp3?id="
-#     userLink = "https://www.radiojavan.com/mp3s/mp3/Satin-Toonesti-Eshgham"
+    # RJAPI = "https://api-rj-app.com/api2/mp3?id="
+    # userLink = "https://www.radiojavan.com/mp3s/mp3/Satin-Toonesti-Eshgham"
 
-#     finalLink = userLink.split('https://www.radiojavan.com/mp3s/mp3/')[1]
+    # finalLink = userLink.split('https://www.radiojavan.com/mp3s/mp3/')[1]
 
-#     URL = RJAPI + finalLink
-#     data = requests.get(URL).text
-#     data = json.loads(data)
+    # URL = RJAPI + finalLink
+    # data = requests.get(URL).text
+    # data = json.loads(data)
 
-#     title = data["title"]
-#     link = data["link"]
+    # title = data["title"]
+    # link = data["link"]
 
-#     print(title, link)
-#     print(finalLink)
+    # print(title, link)
+    # print(finalLink)
 
 #     # query.edit_message_text(text="Selected option: {}".format(query.data))
 #     query.edit_message_text(text=link)
@@ -120,6 +120,24 @@ logger = logging.getLogger(__name__)
 FIRST, SECOND = range(2)
 # Callback data
 ONE, TWO, THREE, FOUR = range(4)
+
+def getMP3():
+
+    RJAPI = "https://api-rj-app.com/api2/mp3?id="
+    userLink = "https://www.radiojavan.com/mp3s/mp3/Satin-Toonesti-Eshgham"
+
+    finalLink = userLink.split('https://www.radiojavan.com/mp3s/mp3/')[1]
+
+    URL = RJAPI + finalLink
+    data = requests.get(URL).text
+    data = json.loads(data)
+
+    title = data["title"]
+    link = data["link"]
+    return link
+    # print(title, link)
+    # print(finalLink)
+
 
 def start(update, context):
     """Send message on `/start`."""
@@ -179,7 +197,7 @@ def one(update, context):
     bot.edit_message_text(
         chat_id=query.message.chat_id,
         message_id=query.message.message_id,
-        text="First CallbackQueryHandler, Choose a route",
+        text="Enter the URL of Music:",
         reply_markup=reply_markup
     )
     return FIRST
@@ -219,6 +237,7 @@ def three(update, context):
         text="Wait...",
         reply_markup=reply_markup
     )
+
     # Transfer to conversation state `SECOND`
     return SECOND
 
