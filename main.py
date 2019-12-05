@@ -1,21 +1,21 @@
 import telegram
 from tokenSetting import APIBot
-import urllib, json
 import requests
+import json
 
 
 RJAPI = "https://api-rj-app.com/api2/mp3?id="
-testLink = "Khashayar-SR-Ki-Chi-Dare-(Ft-Arma)"
+userLink = "https://www.radiojavan.com/mp3s/mp3/Satin-Toonesti-Eshgham"
 
-# json_url = urlopen(RJAPI + testLink)
+finalLink = userLink.split('https://www.radiojavan.com/mp3s/mp3/')[1]
 
-# data = json.loads(json_url.read())
+URL = RJAPI + finalLink
+data = requests.get(URL).text
+data = json.loads(data)
 
-r = requests.get(RJAPI + testLink)
+title = data["title"]
+link = data["link"]
+print(title, link)
 
-print(r.json())
-
-# print(data)
-
-bot = telegram.Bot(token=APIBot)
-print(bot.get_me())
+# bot = telegram.Bot(token=APIBot)
+# print(bot.get_me())
