@@ -109,6 +109,8 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, ConversationHandler
 import logging
+import requests
+import json
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -132,11 +134,9 @@ def getMP3():
     data = requests.get(URL).text
     data = json.loads(data)
 
-    title = data["title"]
+    lyric = data["lyric"]
     link = data["link"]
-    return link
-    # print(title, link)
-    # print(finalLink)
+    return link, lyric
 
 
 def start(update, context):
@@ -171,6 +171,7 @@ def start_over(update, context):
     keyboard = [
         [InlineKeyboardButton("Radio Javan", callback_data=str(ONE)),
          InlineKeyboardButton("Spotify", callback_data=str(TWO))]
+        #  InlineKeyboardButton("Go Back", callback_data=str(FIRST))]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     # Instead of sending a new message, edit the message that
@@ -197,18 +198,17 @@ def one(update, context):
     bot.edit_message_text(
         chat_id=query.message.chat_id,
         message_id=query.message.message_id,
-        text="Enter the URL of Music:",
+        text="What you wanna do?",
         reply_markup=reply_markup
     )
     return FIRST
 
 
 def two(update, context):
-    """Show new choice of buttons"""
     query = update.callback_query
     bot = context.bot
     keyboard = [
-        [InlineKeyboardButton("Go Back", callback_data=str(start_over))]
+        [InlineKeyboardButton("Go Back", callback_data=str(FIRST))]
         #  InlineKeyboardButton("Go Back", callback_data=str(start_over))]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -218,23 +218,24 @@ def two(update, context):
         text="Spotify feature is disable now, Try later.",
         reply_markup=reply_markup
     )
-    return FIRST
+    return SECOND
 
 
 def three(update, context):
     """Show new choice of buttons"""
+    link, lyric = getMP3()
     query = update.callback_query
     bot = context.bot
     keyboard = [
         [
         # InlineKeyboardButton("Yes, let's do it again!", callback_data=str(ONE)),
-         InlineKeyboardButton("Go Back", callback_data=str(start_over))]
+         InlineKeyboardButton("Go Back", callback_data=str(FIRST))]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     bot.edit_message_text(
         chat_id=query.message.chat_id,
         message_id=query.message.message_id,
-        text="Wait...",
+        text=link,
         reply_markup=reply_markup
     )
 
@@ -244,17 +245,18 @@ def three(update, context):
 
 def four(update, context):
     """Show new choice of buttons"""
+    link, lyric = getMP3()
     query = update.callback_query
     bot = context.bot
     keyboard = [
-        [InlineKeyboardButton("2", callback_data=str(TWO)),
-         InlineKeyboardButton("4", callback_data=str(FOUR))]
+        [InlineKeyboardButton("Get the MP3 Link", callback_data=str(THREE)),
+         InlineKeyboardButton("Go Back", callback_data=str(FOUR))]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     bot.edit_message_text(
         chat_id=query.message.chat_id,
         message_id=query.message.message_id,
-        text="Fourth CallbackQueryHandler, Choose a route",
+        text=lyric,
         reply_markup=reply_markup
     )
     return FIRST
